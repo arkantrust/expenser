@@ -90,5 +90,16 @@ func (es ExpenseService) Delete(id int) error {
 }
 
 func (es ExpenseService) GetTotalCost() (int, error) {
-	return 0, errors.ErrUnsupported
+	expenses, err := es.db.Load()
+	if err != nil {
+		return 0, err
+	}
+	
+	sum := 0
+	for _, e := range expenses {
+		if !e.Deleted {
+			sum += e.Amount
+		}
+	}
+	return sum, nil
 }
